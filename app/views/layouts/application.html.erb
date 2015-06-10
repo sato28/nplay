@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>#なうぷれ♪</title>
+  <%= stylesheet_link_tag    "style" %>
+  <%= stylesheet_link_tag    "application" %>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag "script" %>
+  <%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js" %>
+  <%= javascript_include_tag "https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" %>
+  <%= javascript_include_tag "//platform.twitter.com/widgets.js" %> <!-- replayとかのリンクのためのスクリプト -->
+  <%= csrf_meta_tags %>
+</head>
+<body>
+ 
+<%= yield %>
+ 
+</body>
+</html>

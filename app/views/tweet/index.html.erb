@@ -1,0 +1,211 @@
+
+<div id="main">
+  <div id="contents">
+
+    <!-- ログインここから -->
+    <div id="loginBox">
+
+      <div align=center >-- Welcome to #なうぷれ♪ --</div>
+
+      <% if signed_in? %>
+        <%= link_to "Sign Out", "/signout" %> 
+        【<%= session[:username] %>】
+        <% if session[:img].blank? %>
+        <% else %>
+          <%=raw  Rinku.auto_link('<img width=24 alt="Icon" src='+ session[:img]+' align="right" />', :all, 'target="_blank"') %>
+        <% end %>
+      <% else %>
+        <%= link_to "Sign in with Twitter", "/auth/twitter" %>　
+      <% end %>
+
+    </div>
+    <!-- ログインここまで -->
+
+    <div id="underBox">
+      <div id="leftBox">
+	
+	<!-- 動画ここから -->
+	<div id="movieBox">
+
+	  <div id= "movieTop">
+	    <font size="7px" color="white">MOVIE</font>
+	  </div><div id="movieBottom">
+
+	    <script type="text/javascript">
+	      videoList = <%= raw @movie.to_json %>;
+	      var video_list = videoList;</script>
+
+<%= javascript_tag do %>
+<% if @movie.blank? %>  
+              message(0, "message");
+<% end %><% end %>
+
+	    <script type="text/javascript">
+	      var samplenum;
+	      var nowplaying;
+	      swfobject.embedSWF("http://www.youtube.com/v/" + video_list[0][2] + "?enablejsapi=1&autoplay=1&playerapiid=player", "video", "300", "230", "8", null, null, { allowScriptAccess: "always" }, { id: "player" }); 
+	      function onYouTubePlayerReady(playerId) { 
+	        message(1,video_list[0][0]);
+	        samplenum=3;
+	        nowplaying=0;
+	        document.getElementById(playerId).addEventListener("onStateChange", "onytplayerStateChange"); 
+	      } 
+	      
+	      function onytplayerStateChange(newState) { 
+      	        if (newState == 0) { 
+	          delete tweet[nowplaying];
+
+	          var str = "#" + document.chbox.elements[nowplaying++].value;
+	          $(str).fadeOut();
+	          document.getElementById("player").loadVideoById(getMovieId(video_list));
+	          var data = $("form").serialize();
+	          newTweet(tweet,10,data); <!-- TL更新の関数(ツイートの配列,値)ツイートの長さが値を下回っていたら更新 -->
+	          message(1,getMovieName(video_list));
+	          changeList(tweet[samplenum++][6]);
+	          var len = tweet.length;
+	          while(tweet[samplenum]==null){
+	            samplenum++;
+	            if(samplenum>len){
+	              message(0,"ERROR:  追加のツイートがありません。");
+	              break;
+	            }
+	          }
+	        }
+	      } 
+
+	    </script>
+
+
+	    <div id="video"></div> 
+	  </div>
+	</div>
+	<!-- 動画ここまで -->
+	
+	<!-- 検索ここから -->
+	<div id="searchBox">
+
+
+	  <div id="searchTop">
+	     <font size="7px" color="white">SEARCH</font>
+	  </div>
+	  <div id="searchBottom">
+
+	    <%= form_for '' do |f| %>
+	    検索タグ：<br>
+	    <%= f.select :tag, [["#nowplaying", " #nowplaying"], ["#なうぷれ", " #なうぷれ"], ["#nowplaying OR #なうぷれ", " #nowplaying OR #なうぷれ"]] %><br><br>
+
+	    検索範囲：<br>
+	    <label><%= f.radio_button 'scope', '1', {:checked => true} %>全体</label>
+	    <label><%= f.radio_button 'scope', '2', {} %>フォロワー</label>
+	    <label><%= f.radio_button 'scope', '3', {} %>自分</label><br><br>
+
+	    検索単語：<br>
+	    <label><%= f.radio_button 'andOr', '1', {:checked => true} %>AND検索</label>
+	    <label><%= f.radio_button 'andOr', '2', {} %>OR検索</label><br>
+
+	    <%= f.text_field :word, :size => "17" %><br><br>
+	    <%= f.hidden_field :flag, :value => "start1" %>
+
+	    <%= f.hidden_field :tag2, :value => @tag_v %>
+	    <%= f.hidden_field :scope2, :value => @scope_v %>
+	    <%= f.hidden_field :andOr2, :value => @andOr_v %>
+	    <%= f.hidden_field :word2, :value => @word_v %>
+
+	    <%= f.submit ("　検  索　") %>
+	    <% end %>
+
+	  </div>
+	</div>
+	<!-- 検索ここまで -->
+
+      </div><div id="rightBox">
+
+	<!-- オペレーションここから -->
+	<div id="operationBox">
+	  <div id="operationTop">
+
+ <div id="operationA">
+	    <form name="result">
+	      <textarea rows="3" cols="45" name="textarea" id="form1">　　　　-- ここに情報が表示されます。 --</textarea>
+	    </form>
+	   </div>
+
+<div id="operationB">
+	    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+	    <div id="list"></div>
+
+	    <%= javascript_tag do %>
+<% if @flag_v=="start1" then %>
+	    $('#list').html(tweetButton(nowMovie(video_list)));
+<% else %>
+	    document.write('<a href="https://twitter.com/intent/tweet?button_hashtag=nowplaying&text=" class="twitter-hashtag-button" data-size="large" data-url="" >Tweet #nowplaying</a>');
+<% end %>
+	    <% end %>
+</div>
+
+	    <!-- スキップボタン、ツイート削除ボタン -->
+	    <form name="test">
+	      <input type="button" value="動画をスキップ" onclick="onytplayerStateChange(0)" class="btn">
+	      <input type="button" value="  選択したツイートを削除  " onClick="tweetDelete(tweet)">
+	    </form>
+
+	  </div>
+
+	  <div id="operationBottom">
+	     <font size="7px" color="white">INFORMATION</font>
+	  </div>
+
+	</div>
+	<!-- オペレーションここまで -->
+	
+	<!-- TLここから -->
+	<div id="tlBox">
+	  <div id="tlTop">
+	    <form name="chbox">
+	      <ul>
+		<div id="time_line">
+		</div>
+
+   <% tweet_first = Array.new %>
+               <% tweet_first = ["<br><font size=5px><font color=9999ff>>></font>【#なうぷれ♪】取説</font><br><br>","【#なうぷれ♪】 は、ハッシュタグ 『#nowplaying』『#なうぷれ』 を付けて呟かれたツイートを取得し、その動画を連続再生する…という、<font color=red>作業用BGMの作成に特化した</font>webアプリケーションです。", "とりあえず動かすためには、<br><b><font color=red>右上【Sign In】→左下の『検索』ボタンをクリック</font></b><br>しましょう！動画が再生されるはずです。", "<font color=green>【SEARCH】</font>では、検索するツイートの条件を細かく設定することも出来ます。条件次第では全然HITしないなんて事もありますので、使用の際はお気をつけて。", "最初の検索では最大15件のツイートを取ってきます。<font color=gray>【TIMELINE】</font>に表示されているツイートが10件を下回ったら、<b>自動的にツイートを追加検索</b>(最大10件)してくれます。<br>Tweetの削除機能などもありますが、申し訳ありません、<font color=red>検索上位3件は削除しない</font>でください。仕様的な問題です。","<font color=ff4444>【INFORMATION】</font>から、<font color=red>再生中の動画についてツイートする</font>ことも出来ます。後に自分からのTL取得を行うことで、お気に入りリストの代替機能のようにも使用できますよ。"] %>
+		<%= javascript_tag do %>
+		<!-- @tweetがnilかどうか判定 -->
+		<!-- どちらにしても結果と<div id="time_line"></div>が入れ替わる。 -->
+  
+             
+		  <% if @tweet.blank? then %>
+
+                    <% if @flag_v=="start1" then %>
+
+                      <% if signed_in? %>
+                        message(0, "WARNING: 検索結果がありません。");
+                      <% else %>
+                        message(0, "WARNING: Twitterにサインインして下さい。");
+                      <% end %>
+                    <% end %>
+	  	      $('#time_line').html(timeLine_first(<%= raw tweet_first.to_json %>));
+
+	  	  <% else %>
+
+		    tweet = <%= raw @tweet.to_json %>;
+		    $('#time_line').html(timeLine(tweet));
+
+		  <% end %>
+		<% end %>
+	      </ul>
+	    </form>
+	  </div>
+
+	  <div id="tlBottom">
+	    <font size="7px" color="white">TIMELINE</font>
+	  </div>
+
+	</div>
+	<!-- TLここまで -->
+
+      </div>
+    </div>
+  </div>
+
+

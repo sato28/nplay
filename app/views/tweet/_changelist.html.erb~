@@ -1,0 +1,28 @@
+<%= javascript_include_tag 'script' %>
+<%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js" %>
+<%= javascript_include_tag "//platform.twitter.com/widgets.js" %>
+<%= stylesheet_link_tag "style" %>
+
+
+<!-- 	<%= javascript_tag do %> -->
+<!-- 	newList(<%= raw @movie_add.to_json %>); -->
+<!-- 	window.video_list = videoList; -->
+<!--     $('#list').html(<%= raw @movie_add %> -->
+
+
+<!-- ); -->
+<!-- 	<% end %> -->
+
+
+
+
+
+	<%= javascript_tag do %>
+	video1 = <%= raw changelist.to_json %>;
+	var videoList2 = [videoList0[1][2], videoList0[2][2], video1[2]];
+   videoList0 = videoList2
+	window.video_list = videoList0;
+	<!-- var videoList = ["wth6CB2pJg8",videoList0[0][2], videoList0[1][2]]; -->
+	<!-- newList(videoList0[2]); -->
+	document.write(videoList2);
+	<% end %>

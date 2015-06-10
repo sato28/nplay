@@ -1,0 +1,24 @@
+<%= javascript_include_tag 'script' %>
+<%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js" %>
+<%= javascript_include_tag "//platform.twitter.com/widgets.js" %>
+<%= stylesheet_link_tag "style" %>
+
+<%= javascript_tag do %>
+var new_list = <%= raw @movie_add.to_json %>;
+if( new_list == null){
+delete tweet[samplenum-1];
+	var str = "#" + document.chbox.elements[samplenum-1].value;
+	$(str).fadeOut();
+	var len = tweet.length;
+	while(tweet[samplenum]==null){
+	samplenum++;
+	if(samplenum>len){
+	break;
+	}
+	}
+    changeList(tweet[samplenum++][4]);
+}else{
+setNewMovie(video_list,new_list);
+}
+$('#list').html(tweetButton(nowMovie(video_list)));
+<% end %>

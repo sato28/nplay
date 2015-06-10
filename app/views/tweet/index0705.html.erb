@@ -1,0 +1,168 @@
+
+<% params[:flag] = 0 %>
+
+
+<div id="main">
+  <div id="contents">
+
+    <!-- ログインここから -->
+    <div id="loginBox"><br>
+      <% if signed_in? %>
+      Welcome! 【<%= session[:username] %>】
+      <%= link_to "Sign Out", "/signout" %>　
+      <% else %>
+      <%= link_to "Sign in with Twitter", "/auth/twitter" %>　
+      <% end %>
+    </div>
+    <!-- ログインここまで -->
+
+    <div id="leftBox">
+      
+      <!-- 動画ここから -->
+      <div id="movieBox">
+	:: youtube<br><br>
+
+	<!-- <% videoList =["wth6CB2pJg8", "B2NemAFAbBw"] %> -->
+	<% videoList = [@movie_url,"wth6CB2pJg8"]  %>	
+        <!-- <%= videoList %> -->
+	<%= javascript_tag do %>
+	window.video_list = <%= raw videoList.to_json %>;
+	<% end %>
+
+
+	<script type="text/javascript"> 
+	  swfobject.embedSWF("http://www.youtube.com/v/" + video_list[0] + "?enablejsapi=1&autoplay=1&playerapiid=player", "video", "300", "230", "8", null, null, { allowScriptAccess: "always" }, { id: "player" }); 
+	  function onYouTubePlayerReady(playerId) { 
+	    document.getElementById(playerId).addEventListener("onStateChange", "onytplayerStateChange"); 
+	  } 
+
+	  function onytplayerStateChange(newState) { 
+  	    if (newState == 0) { 
+      	      document.getElementById("player").loadVideoById(video_list[1]); 
+	    } <!-- たぶんここにnewState<3とかで条件追加。 -->
+	  } 
+	</script>
+
+	<div id="video"></div> 
+
+      </div>
+      <!-- 動画ここまで -->
+      
+      <!-- 検索ここから -->
+      <div id="searchBox">
+
+	検索設定<br><br>
+
+	<%= form_for '' do |f| %>
+	検索タグ：<br>
+	<%= f.select :tag, [["#nowplaying", " #nowplaying"], ["#なうぷれ", " #なうぷれ"], ["#nowplaying OR #なうぷれ", " #nowplaying OR #なうぷれ"]] %><br><br>
+
+	検索単語：<br>
+	<%= f.radio_button 'andOr', '1', {:checked => true} %>AND検索
+	<%= f.radio_button 'andOr', '2', {} %>OR検索<br>
+	<%= f.text_field :word, :size => "17" %><br><br>
+
+        <%= f.hidden_field :flag, :value => "start1" %> 
+	<%= f.submit ("検索") %>
+
+	<!-- <%= @tag_v %> -->
+	<!-- <%= @andOr_v %> -->
+	<!-- <%= @word_v %> -->
+	<!-- flag=<%= @flag_v %> -->
+
+	<% end %>
+
+
+      </div>
+      <!-- 検索ここまで -->
+
+    </div><div id="rightBox">
+
+      <!-- オペレーションここから -->
+      <div id="operationBox">
+
+	<% movie2_url = @movie_url2  %>
+	<% movie2_name = @movie_name  %>
+	<% movie_str = movie2_name , " ", movie2_url %>
+
+	<a href="https://twitter.com/intent/tweet?button_hashtag=nowplaying&text=<%= movie2_name %>" class="twitter-hashtag-button" data-size="large" data-url="<%= movie2_url %>" >Tweet #nowplaying</a>
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+	<br />
+
+	検索文字列=<%= @ss_word %><br>
+	文字処理前=<%= @str2 %><br>
+	文字処理後=<%= @str3 %><br>
+        <% if @movie_name.blank? || @movie_url.blank? %>
+  	  動画タイトル=none<br>
+	  動画ID=none
+	<% else %>
+  	  動画タイトル=<%= @movie_name %><br>
+	  動画ID=<%= @movie_url %>
+	<% end %><br>
+
+
+
+
+      </div>
+      <!-- オペレーションここまで -->
+      
+      <!-- TLここから -->
+      <div id="tlBox" class="check-group clearfix">
+
+	<% now = Time.now %>
+
+	<div id="links">
+	  <ul>
+	    <%= @str5 %>
+	    <% if @tweet.blank? then %>
+ 	    <!-- <% if params[:flag]=="start1" then %> -->
+	    <%= "検索結果がありませんでした。" %>
+	    <!-- <% end %> -->
+	    <% else %>
+	    <% @tweet.each do |tl| %>
+
+	    <li><input id="checkbox1" type="checkbox" name="check[]" value="c1" />
+	      <label for="checkbox1" style="display: block; WIDTH: 100%;">
+		<%= image_tag tl.user.profile_image_url  %>
+		<%= tl.user.name %><br />
+		<% @screen_name = tl.user.screen_name %>
+
+		<em>  
+		  <% str =  Rinku.auto_link(tl['full_text']) %>
+		  <%=raw str %>
+		</em><br />
+		<span>
+		  <% days = (now - tl.created_at).divmod(24*60*60) %>
+		  <% hours = days[1].divmod(60*60) %>
+		  <% mins = hours[1].divmod(60) %>
+		  <% secs = mins[1].divmod(60) %>
+		  <% if days[0] > 0 then %>
+		  <%= days[0].to_i %>日
+		  <% elsif hours[0] > 0 then %>
+		  <%= hours[0].to_i %>時間
+		  <% elsif mins[0] > 0 then %>
+		  <%= mins[0].to_i %>分
+		  <% else %>
+		  <%= secs[0].to_i %>秒
+		  <% end %>
+
+		  <% if tl.retweeters == true then %>
+		  RETWEET
+		  <% end %>
+		</span>
+	      </label>
+	    </li>
+	    <% end %>
+	    <% end %>
+
+	  </ul>
+
+	</div>
+      </div>
+      <!-- TLここまで -->
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,122 @@
+/* checkbox用の設定 */
+div.check-group input[type=checkbox] {
+	display: none;
+}
+
+div.check-group label {
+	cursor: pointer;
+	background: #ffffff;
+	text-decoration: none;
+}
+div.check-group label:hover{
+	background: #ffffcc;
+}
+div.check-group label.checked {
+	background: #ffffcc;
+}
+input[type=checkbox] {
+	display: none;
+}
+.check{
+	background: #ddddff;
+}
+
+.no_check{
+	background: #ffffff;
+}
+
+.tweetBox{
+    border: 2px solid #9999ff;
+    overflow: hidden;
+	padding: 5px 10px;
+	margin: 10px;
+	width:95%;
+	min-height:30px; 
+	display: block;
+}
+
+.tweetBox:hover{
+	background: #aaaaff;
+}
+.tweetBox:after{
+    content: "";
+    display: block;
+    overflow: hidden;
+}
+
+.imageBox{
+	width:20%;
+    float: left;
+	display: block;
+}
+
+.tweet{
+	width:80%;
+    float: right;
+	display: block;
+}
+
+ul{
+	 padding: 5px 10px;
+	 margin-left: -1px;
+	list-style-type: none;
+	width: 90%;
+}
+
+.tweetBox li{
+	color: #990000;
+	display: block;
+	font: bold 120% Arial, Helvetica, sans-serif;
+	text-decoration: none;
+}
+
+a.tweet{
+z-index: 100;
+}
+
+.tweetBox li a{
+	color: #4169e1;
+	text-decoration: none;
+  z-index: 100;  
+}
+
+.tweetBox li:hover{
+	/* マウスオーバー時の色 */
+	background: #aaaaff;
+}
+
+.username{
+/* 名前 */
+	color: #333;
+	float:left;
+	font: normal 75% Verdana, Helvetica, sans-serif;
+	line-height: 125%;
+}
+
+.userid{
+/* ユーザーid */
+	float:left;
+	font: normal 60% Verdana, Helvetica, sans-serif;
+	line-height: 125%;
+}
+.tweetTime{
+	/* 投稿時間 */
+	color: #006400;
+	font: normal 50% Verdana, Helvetica, sans-serif;
+	line-height: 125%;
+	float:right;
+}
+.tweetText{
+/* ツイート内容 */
+	color: #333;
+	display: block;
+	font: normal 80% Verdana, Helvetica, sans-serif;
+	line-height: 125%;
+	float:left;
+}
+.tweetAction{
+	font: normal 50% Verdana, Helvetica, sans-serif;
+	line-height: 125%;
+	display: block;
+	float:right;
+}
